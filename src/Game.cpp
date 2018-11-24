@@ -4,25 +4,26 @@
 #include <chrono>
 
 #include "Game.h"
+#include "helper.h"
 
 const int NUMTURNS = 12;
 const int NUMROUNDS = 8;
 const int NUMPLAYERS = 4;
 
 void Game::start() {
-    //TODO initialize rules
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    auto rng = std::default_random_engine{seed};
 
+    //TODO initialize rules
     for (int round = 0; round < NUMROUNDS; round++) {
 
         //set player cards
-        std::vector<std::vector<Card>> playerCards = createPlayerCards(m_allCards, rng);
-        for(int i=0;i<NUMPLAYERS;i++){
-            m_players.at(i).setCards(playerCards.at(i));
+        m_playerCards = createPlayerCards(m_allCards);
+        for (size_t i = 0; i < NUMPLAYERS; i++) {
+            m_players.at(i).setCards(m_playerCards.at(i));
+            printVector(m_playerCards.at(i));
         }
 
-        //TODO await extra rules
+
+        //TODO await extra rules like solo
         int startingPlayer = 0;
         for (int i = 0; i < NUMTURNS; i++) {
             startingPlayer = playRound(startingPlayer);
@@ -30,23 +31,68 @@ void Game::start() {
     }
 }
 
+bool Game::checkValidCard(size_t playerID, Card firstCard, Card newCard) {
+    auto cards = m_playerCards.at(playerID);
+    //Card available?
+    if (!contains(cards, newCard)) return false;
+    //served ?
+    if (m_rules.isSameType(firstCard, newCard)) return true;
+        //no need to serve?
+    else if (m_rules.containsType(cards, newCard)) return false;
+    return true;
+}
+
+std::vector<Card> Game::getValidCards(size_t playerID, Card &c) {
+    std::vector<Card> validCards = std::vector<Card>();
+    for (Card card : m_playerCards.at(playerID)) {
+        if (checkValidCard(playerID, c, card))
+            validCards.push_back(card);
+    }
+    return validCards;
+}
+
 int Game::playRound(int startingPlayer) {
     int winner = 0;
-    Player winningPlayer = m_players.at(0);
-    for (int player = 0; player < NUMPLAYERS; player++) {
-        Player * p = &m_players.at((player + startingPlayer) % NUMPLAYERS);
+    Card winningCard(Suit::DIAMONDS, CardValue::NINE); //dummy card
+    for (size_t player = 0; player < NUMPLAYERS; player++) {
+        size_t playerID = (player + startingPlayer) % NUMPLAYERS;
+        Player *p = &m_players.at(playerID);
+        auto playerCards = &m_playerCards.at(playerID);
         Card playedCard = p->nextRound();
+
+        if (player == 0)
+            winningCard = playedCard;
+
+        if (!checkValidCard(playerID, winningCard, playedCard)) {
+            auto validCards = getValidCards(playerID, winningCard);
+            auto idx = size_t(randomInt(0, validCards.size()));
+            playedCard = validCards.at(idx);
+            std::cout << *p << " played invalid card \n";
+            if (player == 0)
+                winningCard = playedCard;
+        }
+        playerCards->erase(std::find(playerCards->begin(), playerCards->end(), playedCard));
+        if (m_rules.isHigher(playedCard, winningCard)) {
+            winningCard = playedCard;
+            winner = playerID;
+        }
         std::cout << *p << " played: <" << playedCard << "> ";
     }
     std::cout << std::endl;
     return winner;
 }
 
-std::vector<std::vector<Card>> Game::createPlayerCards(std::vector<Card> cards, std::default_random_engine &rng) {
+std::vector<std::vector<Card>> Game::createPlayerCards(std::vector<Card> cards) {
     std::vector<std::vector<Card>> playerCards;
-    std::shuffle(std::begin(m_allCards), std::end(m_allCards), rng);
+    //TODO, actually generate random arrays, not the same every programm execution
+    std::random_device rd;
+    std::mt19937 g(rd());
+    printVector(cards);
+    std::shuffle(cards.begin(), cards.end(), g);
+    printVector(cards);
     for (int i = 0; i < NUMPLAYERS; i++) {
         auto set = std::vector<Card>(cards.begin() + i * NUMTURNS, cards.begin() + (i + 1) * NUMTURNS);
+        printVector(set);
         playerCards.push_back(set);
     }
     return playerCards;

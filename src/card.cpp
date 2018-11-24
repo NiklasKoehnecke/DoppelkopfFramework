@@ -39,3 +39,20 @@ std::ostream &operator<<(std::ostream &os, const Card &card) {
     return os;
 }
 
+Suit Card::suit() const {
+    return m_suit;
+}
+
+CardValue Card::value() const {
+    return m_value;
+}
+
+bool Card::operator==(const Card &rhs) const {
+    return m_suit == rhs.m_suit &&
+           m_value == rhs.m_value;
+}
+
+bool Card::operator!=(const Card &rhs) const {
+    return !(rhs == *this);
+}
+
