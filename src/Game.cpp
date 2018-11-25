@@ -11,21 +11,22 @@ const int NUMROUNDS = 8;
 const int NUMPLAYERS = 4;
 
 void Game::start() {
-
+    m_rules = Ruleset();
     //TODO initialize rules
     for (int round = 0; round < NUMROUNDS; round++) {
-
+        std::cout <<m_rules.isTrump(Card(Suit::SPADES, CardValue::QUEEN));
+        std::cout <<m_rules.isTrump(Card(Suit::SPADES, CardValue::KING));
         //set player cards
         m_playerCards = createPlayerCards(m_allCards);
         for (size_t i = 0; i < NUMPLAYERS; i++) {
             m_players.at(i).setCards(m_playerCards.at(i));
-            printVector(m_playerCards.at(i));
         }
 
 
         //TODO await extra rules like solo
         int startingPlayer = 0;
         for (int i = 0; i < NUMTURNS; i++) {
+            std::cout <<"New Round!\n";
             startingPlayer = playRound(startingPlayer);
         }
     }
@@ -37,8 +38,12 @@ bool Game::checkValidCard(size_t playerID, Card firstCard, Card newCard) {
     if (!contains(cards, newCard)) return false;
     //served ?
     if (m_rules.isSameType(firstCard, newCard)) return true;
-        //no need to serve?
-    else if (m_rules.containsType(cards, newCard)) return false;
+    //no need to serve?
+    else {
+        std::cout <<firstCard << " ";
+        printVector(cards);
+        if (m_rules.containsType(cards, firstCard)) return false;
+    }
     return true;
 }
 
@@ -65,9 +70,12 @@ int Game::playRound(int startingPlayer) {
 
         if (!checkValidCard(playerID, winningCard, playedCard)) {
             auto validCards = getValidCards(playerID, winningCard);
+            std::cout <<"valid cards:";
+            printVector(validCards);
             auto idx = size_t(randomInt(0, validCards.size()));
+            std::cout << *p << " played invalid card <" << playedCard << "> \n";
             playedCard = validCards.at(idx);
-            std::cout << *p << " played invalid card \n";
+
             if (player == 0)
                 winningCard = playedCard;
         }
@@ -84,12 +92,10 @@ int Game::playRound(int startingPlayer) {
 
 std::vector<std::vector<Card>> Game::createPlayerCards(std::vector<Card> cards) {
     std::vector<std::vector<Card>> playerCards;
-    //TODO, actually generate random arrays, not the same every programm execution
+    //TODO, actually generate random arrays, not the same every programm execution(which shuffle apparently does)
     std::random_device rd;
     std::mt19937 g(rd());
-    printVector(cards);
     std::shuffle(cards.begin(), cards.end(), g);
-    printVector(cards);
     for (int i = 0; i < NUMPLAYERS; i++) {
         auto set = std::vector<Card>(cards.begin() + i * NUMTURNS, cards.begin() + (i + 1) * NUMTURNS);
         printVector(set);

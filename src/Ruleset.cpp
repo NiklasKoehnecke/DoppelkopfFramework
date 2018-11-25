@@ -30,7 +30,8 @@ bool Ruleset::containsTrump(std::vector<Card> cards) {
 }
 
 bool Ruleset::containsType(std::vector<Card> cards, Card card) {
-    if (isTrump(card))return containsTrump(cards);
+    if (isTrump(card))
+        return containsTrump(cards);
     for (Card c: cards)
         if (!isTrump(c) && c.suit() == card.suit())
             return true;
@@ -38,7 +39,7 @@ bool Ruleset::containsType(std::vector<Card> cards, Card card) {
 }
 
 bool Ruleset::isSameType(Card c1, Card c2) {
-    if (isTrump(c1) == isTrump(c2) && isTrump(c1)) return true;
+    if ((isTrump(c1) == isTrump(c2)) && isTrump(c1)) return true;
     else {
         return c1.suit() == c2.suit();
     }
