@@ -39,19 +39,25 @@ bool Ruleset::containsType(std::vector<Card> cards, Card card) {
 }
 
 bool Ruleset::isSameType(Card c1, Card c2) {
-    if ((isTrump(c1) == isTrump(c2)) && isTrump(c1)) return true;
+    if (isTrump(c1) && isTrump(c2)) return true;
     else {
+        if (isTrump(c1) || isTrump(c2)) return false;
         return c1.suit() == c2.suit();
     }
 }
 
 bool Ruleset::isHigher(Card secondCard, Card firstCard) {
+    //overall value changes in the constructor of another rule set
+    //special order rules here
+    if (secondCard == firstCard && firstCard == Card(Suit::HEARTS, CardValue::TEN))return true;//both H1
+    //regular rules here
     if (isTrump(firstCard)) {
         if (!isTrump(secondCard))
             return false;
         return std::distance(std::find(m_trumpCards.begin(), m_trumpCards.end(), firstCard),
-                             std::find(m_trumpCards.begin(), m_trumpCards.end(), secondCard)) <= 0;
+                             std::find(m_trumpCards.begin(), m_trumpCards.end(), secondCard)) > 0;
     } else {
+        if (isTrump(secondCard)) return true;
         if (firstCard.suit() != secondCard.suit()) return false;
         //enums are sorted by value
         return firstCard.value() < secondCard.value();

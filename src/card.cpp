@@ -1,7 +1,3 @@
-//
-// Created by Niklas_Laptop on 23.11.2018.
-//
-
 #include "card.h"
 
 std::string suitName(Suit s) {

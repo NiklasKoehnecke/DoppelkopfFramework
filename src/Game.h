@@ -20,7 +20,7 @@ private:
 
     std::vector<std::vector<Card>> createPlayerCards(std::vector<Card> cards);
 
-    int playRound(int startingPlayer);
+    size_t playRound(size_t startingPlayer);
 
 
     std::vector<Player> m_players;

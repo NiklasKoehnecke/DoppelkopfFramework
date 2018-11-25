@@ -14,8 +14,10 @@ void Game::start() {
     m_rules = Ruleset();
     //TODO initialize rules
     for (int round = 0; round < NUMROUNDS; round++) {
-        std::cout <<m_rules.isTrump(Card(Suit::SPADES, CardValue::QUEEN));
-        std::cout <<m_rules.isTrump(Card(Suit::SPADES, CardValue::KING));
+        std::cout << m_rules.isTrump(Card(Suit::SPADES, CardValue::QUEEN)) << " ";
+        std::cout << m_rules.isTrump(Card(Suit::SPADES, CardValue::KING)) << " ";
+        std::cout << m_rules.isSameType(Card(Suit::SPADES, CardValue::KING), Card(Suit::SPADES, CardValue::QUEEN))
+                  << " ";
         //set player cards
         m_playerCards = createPlayerCards(m_allCards);
         for (size_t i = 0; i < NUMPLAYERS; i++) {
@@ -26,7 +28,7 @@ void Game::start() {
         //TODO await extra rules like solo
         int startingPlayer = 0;
         for (int i = 0; i < NUMTURNS; i++) {
-            std::cout <<"New Round!\n";
+            std::cout << "New Round!\n";
             startingPlayer = playRound(startingPlayer);
         }
     }
@@ -39,11 +41,7 @@ bool Game::checkValidCard(size_t playerID, Card firstCard, Card newCard) {
     //served ?
     if (m_rules.isSameType(firstCard, newCard)) return true;
     //no need to serve?
-    else {
-        std::cout <<firstCard << " ";
-        printVector(cards);
-        if (m_rules.containsType(cards, firstCard)) return false;
-    }
+    else if (m_rules.containsType(cards, firstCard)) return false;
     return true;
 }
 
@@ -56,8 +54,8 @@ std::vector<Card> Game::getValidCards(size_t playerID, Card &c) {
     return validCards;
 }
 
-int Game::playRound(int startingPlayer) {
-    int winner = 0;
+size_t Game::playRound(size_t startingPlayer) {
+    size_t winner = startingPlayer;
     Card winningCard(Suit::DIAMONDS, CardValue::NINE); //dummy card
     for (size_t player = 0; player < NUMPLAYERS; player++) {
         size_t playerID = (player + startingPlayer) % NUMPLAYERS;
@@ -67,13 +65,10 @@ int Game::playRound(int startingPlayer) {
 
         if (player == 0)
             winningCard = playedCard;
-
+        //if an invalid card was played, choose a random card to play
         if (!checkValidCard(playerID, winningCard, playedCard)) {
             auto validCards = getValidCards(playerID, winningCard);
-            std::cout <<"valid cards:";
-            printVector(validCards);
-            auto idx = size_t(randomInt(0, validCards.size()));
-            std::cout << *p << " played invalid card <" << playedCard << "> \n";
+            auto idx = size_t(randomInt(0, validCards.size() - 1));
             playedCard = validCards.at(idx);
 
             if (player == 0)
@@ -86,7 +81,7 @@ int Game::playRound(int startingPlayer) {
         }
         std::cout << *p << " played: <" << playedCard << "> ";
     }
-    std::cout << std::endl;
+    std::cout << "winner: " << m_players.at(winner) <<std::endl;
     return winner;
 }
 
@@ -98,7 +93,6 @@ std::vector<std::vector<Card>> Game::createPlayerCards(std::vector<Card> cards) 
     std::shuffle(cards.begin(), cards.end(), g);
     for (int i = 0; i < NUMPLAYERS; i++) {
         auto set = std::vector<Card>(cards.begin() + i * NUMTURNS, cards.begin() + (i + 1) * NUMTURNS);
-        printVector(set);
         playerCards.push_back(set);
     }
     return playerCards;
