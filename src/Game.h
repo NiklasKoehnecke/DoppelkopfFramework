@@ -12,7 +12,9 @@ public:
     }
 
     bool checkValidCard(size_t PlayerID, Card firstCard, Card newCard);
+
     std::vector<Card> getValidCards(size_t playerID, Card &c);
+
     void start();
 
 private:

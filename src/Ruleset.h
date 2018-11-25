@@ -10,9 +10,13 @@ public:
     Ruleset();
 
     bool isTrump(Card card);
+
     bool containsTrump(std::vector<Card> cards);
+
     bool containsType(std::vector<Card> cards, Card c);
+
     bool isHigher(Card highCard, Card newCard);
+
     bool isSameType(Card c1, Card c2);
 
 protected:

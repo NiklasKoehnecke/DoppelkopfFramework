@@ -1,7 +1,3 @@
-//
-// Created by Niklas_Laptop on 23.11.2018.
-//
-
 #ifndef DOPPELKOPF_PLAYER_H
 #define DOPPELKOPF_PLAYER_H
 
@@ -12,9 +8,9 @@
 
 class Player {
 public:
-    Player(const std::string &m_name = "noName") : m_name(m_name) {}
+    explicit Player(const std::string &&m_name = "noName") : m_name(m_name) {}
 
-    void setCards(std::vector<Card> cards) { m_cards = cards; };
+    void setCards(std::vector<Card> cards) { m_cards = std::move(cards); };
 
     Card nextRound();
 
@@ -23,7 +19,7 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const Player &player);
 
 protected:
-    std::string m_name;
+    const std::string m_name;
     std::vector<Card> m_cards;
 };
 

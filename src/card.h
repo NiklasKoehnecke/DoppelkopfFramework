@@ -1,7 +1,3 @@
-//
-// Created by Niklas_Laptop on 23.11.2018.
-//
-
 #ifndef DOPPELKOPF_CARD_H
 #define DOPPELKOPF_CARD_H
 
