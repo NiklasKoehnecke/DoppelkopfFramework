@@ -64,6 +64,24 @@ bool Ruleset::isHigher(Card secondCard, Card firstCard) {
     }
 }
 
+int Ruleset::getValue(Card c) {
+    switch(c.value()){
+        case CardValue::NINE:
+            return 0;
+        case CardValue::TEN:
+            return 10;
+        case CardValue::JACK:
+            return 2;
+        case CardValue::QUEEN:
+            return 3;
+        case CardValue::KING:
+            return 4;
+        case CardValue::ASS:
+            return 11;
+    }
+    return 0;
+}
+
 
 
 

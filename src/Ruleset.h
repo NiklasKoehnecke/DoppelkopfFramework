@@ -17,6 +17,8 @@ public:
 
     bool isHigher(Card highCard, Card newCard);
 
+    int getValue(Card c);
+
     bool isSameType(Card c1, Card c2);
 
 protected:
