@@ -23,14 +23,24 @@ private:
 
     std::vector<std::vector<Card>> createPlayerCards(std::vector<Card> cards);
 
+    void setRegularTeams();
+
+    size_t getTeamMember(size_t playerID);
+
+    bool teamMembers(size_t player1, size_t player2);
+
     size_t playRound(size_t startingPlayer);
-    std::pair<int,int> calculateLastRoundPoints(size_t winner, size_t startingPlayer);
+
+    std::pair<int, int> calculateLastRoundPoints(size_t winner, size_t startingPlayer, bool lastRound);
+
+    std::vector<int> awardGamePoints(std::vector<int> &roundPoints, std::vector<int> playerPoints);
 
     std::vector<Player> m_players;
     std::vector<Card> m_allCards;
     std::vector<std::vector<Card>> m_playerCards;
     std::vector<Card> m_cardsLastRound;
     std::vector<int> m_playerPoints;
+    std::vector<bool> m_teams; // 0  is contra, 1 is re
     Ruleset m_rules;
 };
 

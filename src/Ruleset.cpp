@@ -38,7 +38,7 @@ bool Ruleset::containsType(std::vector<Card> cards, Card card) {
     return false;
 }
 
-bool Ruleset::isSameType(Card c1, Card c2) {
+bool Ruleset::isSameType(const Card &c1, const Card &c2) {
     if (isTrump(c1) && isTrump(c2)) return true;
     else {
         if (isTrump(c1) || isTrump(c2)) return false;
@@ -46,7 +46,7 @@ bool Ruleset::isSameType(Card c1, Card c2) {
     }
 }
 
-bool Ruleset::isHigher(Card secondCard, Card firstCard) {
+bool Ruleset::isHigher(const Card &secondCard, const Card &firstCard) {
     //overall value changes in the constructor of another rule set
     //special order rules here
     if (secondCard == firstCard && firstCard == Card(Suit::HEARTS, CardValue::TEN))return true;//both H1
@@ -64,7 +64,7 @@ bool Ruleset::isHigher(Card secondCard, Card firstCard) {
     }
 }
 
-int Ruleset::getValue(Card c) {
+int Ruleset::getValue(const Card &c) {
     switch(c.value()){
         case CardValue::NINE:
             return 0;
