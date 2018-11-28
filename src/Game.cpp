@@ -50,7 +50,7 @@ void Game::setRegularTeams() {
     //regular rules:
     for (size_t i = 0; i < NUMPLAYERS; i++) {
         if (contains(m_playerCards.at(i), Card(Suit::CLUBS, CardValue::QUEEN)))
-            m_teams.at(1) = true;
+            m_teams.at(i) = true;
     }
 }
 
@@ -132,9 +132,10 @@ std::vector<int> Game::awardGamePoints(std::vector<int> &roundPoints, std::vecto
             team0winPoints += playerPoints.at(i);
         }
     }
-    std::cout << team0CardPoints << " " << team1CardPoints;
+    printVector(m_teams);
+    std::cout << team0CardPoints << " " << team1CardPoints << "\n";
     if (team0CardPoints > team1CardPoints) {
-        ++team0winPoints;
+        team0winPoints += 2;
         if (team1CardPoints < 90) ++team0winPoints;
         if (team1CardPoints < 60) ++team0winPoints;
         if (team1CardPoints < 30) ++team0winPoints;
@@ -143,6 +144,7 @@ std::vector<int> Game::awardGamePoints(std::vector<int> &roundPoints, std::vecto
         team1winPoints = 0;
         team1winPoints -= team0winPoints;
     } else {
+        ++team1winPoints;
         if (team0CardPoints < 90) ++team1winPoints;
         if (team0CardPoints < 60) ++team1winPoints;
         if (team0CardPoints < 30) ++team1winPoints;
@@ -159,7 +161,6 @@ std::vector<int> Game::awardGamePoints(std::vector<int> &roundPoints, std::vecto
             playerPoints.at(i) = team0winPoints;
         }
     }
-    printVector(playerPoints);
     return playerPoints;
 }
 
@@ -204,8 +205,9 @@ size_t Game::playRound(size_t startingPlayer) {
 std::vector<std::vector<Card>> Game::createPlayerCards(std::vector<Card> cards) {
     std::vector<std::vector<Card>> playerCards;
     //TODO, actually generate random arrays, not the same every programm execution(which shuffle apparently does)
-    std::random_device rd;
-    std::mt19937 g(rd());
+    auto s1 = static_cast<long unsigned int>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+    std::seed_seq seed{ static_cast<long unsigned int>(s1) };
+    std::mt19937 g(seed);
     std::shuffle(cards.begin(), cards.end(), g);
     for (int i = 0; i < NUMPLAYERS; i++) {
         auto set = std::vector<Card>(cards.begin() + i * NUMTURNS, cards.begin() + (i + 1) * NUMTURNS);
