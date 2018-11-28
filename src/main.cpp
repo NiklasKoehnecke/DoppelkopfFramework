@@ -8,6 +8,5 @@ int main() {
     players.push_back(Player("#4"));
     Game g = Game(players);
     g.start();
-    std::cout << "Hello, World!" << std::endl;
     return 0;
 }

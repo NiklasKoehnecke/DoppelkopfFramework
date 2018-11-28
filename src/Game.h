@@ -4,6 +4,7 @@
 #include <random>
 #include "Player.h"
 #include "Ruleset.h"
+#include "Round.h"
 
 class Game {
 public:
@@ -16,7 +17,7 @@ public:
 
     std::vector<Card> getValidCards(size_t playerID, Card &c);
 
-    void start();
+    std::vector<int> start();
 
 private:
     void initializeCards();
@@ -29,16 +30,15 @@ private:
 
     bool teamMembers(size_t player1, size_t player2);
 
-    size_t playRound(size_t startingPlayer);
+    Round playRound(size_t startingPlayer);
 
-    std::pair<int, int> calculateLastRoundPoints(size_t winner, size_t startingPlayer, bool lastRound);
+    std::pair<int, int> calculateLastRoundPoints(Round r, bool lastRound);
 
-    std::vector<int> awardGamePoints(std::vector<int> &roundPoints, std::vector<int> playerPoints);
+    std::vector<int> awardGamePoints(std::vector<Round> &rounds);
 
     std::vector<Player> m_players;
     std::vector<Card> m_allCards;
     std::vector<std::vector<Card>> m_playerCards;
-    std::vector<Card> m_cardsLastRound;
     std::vector<int> m_playerPoints;
     std::vector<bool> m_teams; // 0  is contra, 1 is re
     Ruleset m_rules;

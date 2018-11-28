@@ -11,12 +11,15 @@ const int NUMROUNDS = 8;
 const int NUMPLAYERS = 4;
 
 
-void Game::start() {
+std::vector<int> Game::start() {
     m_rules = Ruleset();
+
     //TODO initialize rules
+
+    std::vector<int> totalPlayerPoints(NUMPLAYERS);
     for (int round = 0; round < NUMROUNDS; round++) {
+        std::cout << "New Round!\n";
         //set player cards
-        std::vector<int> playerPoints(NUMPLAYERS);
         m_playerCards = createPlayerCards(m_allCards);
         for (size_t i = 0; i < NUMPLAYERS; i++) {
             m_players.at(i).setCards(m_playerCards.at(i));
@@ -24,26 +27,27 @@ void Game::start() {
 
         m_teams = std::vector<bool>(NUMPLAYERS);
         setRegularTeams();
+
         //TODO set teams with soli and wedding, adjust everything to work with those conditions
         //TODO await extra rules like solo
-
-        std::vector<int> roundPoints(NUMPLAYERS);
+        std::vector<Round> rounds;
         //play a round
-        int startingPlayer = 0;
+        size_t startingPlayer = 0;
         for (size_t i = 0; i < NUMTURNS; i++) {
-            //m_cardsLastRound = std::vector<Card>();
-            std::cout << "New Round!\n";
-            size_t winner = playRound(startingPlayer);
-            auto result = calculateLastRoundPoints(winner, startingPlayer, i - 1 == NUMTURNS);
-            roundPoints.at(winner) += result.first;
-            playerPoints.at(winner) += result.second;
+            Round r = playRound(startingPlayer);
+            rounds.push_back(r);
+            size_t winner = r.getWinner();
             startingPlayer = winner;
         }
+        auto playerPoints = awardGamePoints(rounds);
         printVector(playerPoints);
-        playerPoints = awardGamePoints(roundPoints, playerPoints);
-        printVector(playerPoints);
-        //TODO Calculate points of players
+        for (size_t id = 0; id < NUMPLAYERS; id++) {
+            totalPlayerPoints.at(id) += playerPoints.at(id);
+        }
     }
+    std::cout << "end result" << std::endl;
+    printVector(totalPlayerPoints);
+    return totalPlayerPoints;
 }
 
 void Game::setRegularTeams() {
@@ -66,13 +70,15 @@ bool Game::teamMembers(size_t player1, size_t player2) {
     return player1 == player2 || getTeamMember(player1) == player2;
 }
 
-std::pair<int, int> Game::calculateLastRoundPoints(size_t winner, size_t startingPlayer, bool lastRound) {
-    //TODO calculate amount of points and stuff like foxes and CJ's
+std::pair<int, int> Game::calculateLastRoundPoints(Round r, bool lastRound) {
+    size_t startingPlayer = r.getStartPosition();
+    size_t winner = r.getWinner();
+
     int rawCardPoints = 0;
     int gamePoints = 0;
     for (size_t i = 0; i < NUMPLAYERS; i++) {
         size_t playerID = (i + startingPlayer) % NUMPLAYERS;
-        Card &playedCard = m_cardsLastRound.at(playerID);
+        Card playedCard = r.playedCards().at(playerID);
         rawCardPoints += m_rules.getValue(playedCard);
 
         //TODO fix this for when teams are not yet determined
@@ -84,11 +90,12 @@ std::pair<int, int> Game::calculateLastRoundPoints(size_t winner, size_t startin
         //Catch CJ and win with it
         if (lastRound) {
             Card cj = Card(Suit::CLUBS, CardValue::JACK);
-            if (m_cardsLastRound.at(winner) == cj)
+            if (r.playedCards().at(winner) == cj) //win with it
                 ++gamePoints;
-            for (int j = 0; j < NUMPLAYERS; j++) {
+            for (size_t j = 0; j < NUMPLAYERS; j++) { //catch it
                 if (!teamMembers(j, winner)) {
-                    ++gamePoints;
+                    if (r.playedCards().at(j) == cj)
+                        ++gamePoints;
                 }
             }
         }
@@ -97,7 +104,6 @@ std::pair<int, int> Game::calculateLastRoundPoints(size_t winner, size_t startin
     return std::pair<int, int>(rawCardPoints, gamePoints);
 
 }
-
 
 bool Game::checkValidCard(size_t playerID, Card firstCard, Card newCard) {
     auto cards = m_playerCards.at(playerID);
@@ -119,7 +125,17 @@ std::vector<Card> Game::getValidCards(size_t playerID, Card &c) {
     return validCards;
 }
 
-std::vector<int> Game::awardGamePoints(std::vector<int> &roundPoints, std::vector<int> playerPoints) {
+std::vector<int> Game::awardGamePoints(std::vector<Round> &rounds) {
+    std::vector<int> playerPoints(4);
+    std::vector<int> roundPoints(4);
+
+    for (size_t turn = 0; turn < rounds.size(); turn++) {
+        size_t winner;
+        winner = rounds.at(turn).getWinner();
+        auto result = calculateLastRoundPoints(rounds.at(turn), turn == NUMROUNDS - 1);
+        roundPoints.at(winner) += result.first;
+        playerPoints.at(winner) += result.second;
+    }
     //TODO refactor
     std::vector<int> winPoints = playerPoints;
     int team0CardPoints = 0, team1CardPoints = 0, team0winPoints = 0, team1winPoints = 0;
@@ -132,8 +148,7 @@ std::vector<int> Game::awardGamePoints(std::vector<int> &roundPoints, std::vecto
             team0winPoints += playerPoints.at(i);
         }
     }
-    printVector(m_teams);
-    std::cout << team0CardPoints << " " << team1CardPoints << "\n";
+    //TODO: Adjust with team size != 2
     if (team0CardPoints > team1CardPoints) {
         team0winPoints += 2;
         if (team1CardPoints < 90) ++team0winPoints;
@@ -164,8 +179,7 @@ std::vector<int> Game::awardGamePoints(std::vector<int> &roundPoints, std::vecto
     return playerPoints;
 }
 
-//sets m_cardsLastRound
-size_t Game::playRound(size_t startingPlayer) {
+Round Game::playRound(size_t startingPlayer) {
     size_t winner = startingPlayer;
     Card winningCard(Suit::DIAMONDS, CardValue::NINE); //dummy card
     std::vector<Card> playedCards{winningCard, winningCard, winningCard, winningCard}; //this will be overridden
@@ -178,6 +192,7 @@ size_t Game::playRound(size_t startingPlayer) {
 
         if (player == 0)
             winningCard = playedCard;
+
         //if an invalid card was played, choose a random card to play
         if (!checkValidCard(playerID, winningCard, playedCard)) {
             auto validCards = getValidCards(playerID, winningCard);
@@ -188,7 +203,7 @@ size_t Game::playRound(size_t startingPlayer) {
                 winningCard = playedCard;
         }
         currentPlayerCards->erase(std::find(currentPlayerCards->begin(), currentPlayerCards->end(), playedCard));
-        playedCards.at(playerID) = playedCard; //use at to preserve player <-> card identity
+        playedCards.at(playerID) = playedCard; //use "at" to preserve player <-> card identity
 
         if (m_rules.isHigher(playedCard, winningCard)) {
             winningCard = playedCard;
@@ -197,16 +212,14 @@ size_t Game::playRound(size_t startingPlayer) {
         std::cout << *p << " played: <" << playedCard << "> ";
     }
     std::cout << "winner: " << m_players.at(winner) << std::endl;
-    m_cardsLastRound = playedCards;
 
-    return winner;
+    return Round(playedCards, winner, startingPlayer);
 }
 
 std::vector<std::vector<Card>> Game::createPlayerCards(std::vector<Card> cards) {
     std::vector<std::vector<Card>> playerCards;
-    //TODO, actually generate random arrays, not the same every programm execution(which shuffle apparently does)
     auto s1 = static_cast<long unsigned int>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-    std::seed_seq seed{ static_cast<long unsigned int>(s1) };
+    std::seed_seq seed{s1};
     std::mt19937 g(seed);
     std::shuffle(cards.begin(), cards.end(), g);
     for (int i = 0; i < NUMPLAYERS; i++) {
