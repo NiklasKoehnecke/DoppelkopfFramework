@@ -1,0 +1,15 @@
+set(SOURCE
+        ${SOURCE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/card.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/card.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/Game.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/Game.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/helper.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/helper.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/Player.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Player.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/Round.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Round.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/Ruleset.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/Ruleset.h
+        PARENT_SCOPE)

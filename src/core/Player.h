@@ -12,9 +12,8 @@ public:
 
     void setCards(std::vector<Card> cards) { m_cards = std::move(cards); };
 
-    Card nextRound();
+    virtual Card nextRound() = 0;
 
-protected:
 public:
     friend std::ostream &operator<<(std::ostream &os, const Player &player);
 
