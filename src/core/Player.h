@@ -8,13 +8,12 @@
 
 class Player {
 public:
-    explicit Player(const std::string &&m_name = "noName") : m_name(m_name) {}
+    Player(std::string name = "noName") : m_name(name) {}
 
     void setCards(std::vector<Card> cards) { m_cards = std::move(cards); };
 
-    virtual Card nextRound() = 0;
+    virtual Card nextRound();
 
-public:
     friend std::ostream &operator<<(std::ostream &os, const Player &player);
 
 protected:

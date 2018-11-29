@@ -5,6 +5,8 @@
 
 class ExampleBot: public Player {
 public:
+    ExampleBot(): Player("ExampleBot"){};
+
     Card nextRound() override;
 };
 
