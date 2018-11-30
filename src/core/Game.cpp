@@ -29,8 +29,10 @@ std::vector<int> Game::start() {
         setRegularTeams();
 
         //TODO set teams with soli and wedding, adjust everything to work with those conditions
+        //TODO add flag for when teams are not yet set
         //TODO await extra rules like solo
         std::vector<Round> rounds;
+
         //play a round
         size_t startingPlayer = 0;
         for (size_t i = 0; i < NUMTURNS; i++) {
@@ -58,16 +60,19 @@ void Game::setRegularTeams() {
     }
 }
 
-size_t Game::getTeamMember(size_t playerID) {
+std::vector<size_t> Game::getTeamMember(size_t playerID) {
+    std::vector<size_t> members;
     for (size_t i = 0; i < m_teams.size(); i++) {
         if (i != playerID && m_teams.at(playerID) == m_teams.at(i))
-            return i;
+            members.push_back(i);
     }
-    return 5;
+    return members;
 }
 
+//This will not work correctly if there is a wedding and teams are not yet determined
+//TODO add flag
 bool Game::teamMembers(size_t player1, size_t player2) {
-    return player1 == player2 || getTeamMember(player1) == player2;
+    return player1 == player2 || contains(getTeamMember(player1), player2);
 }
 
 std::pair<int, int> Game::calculateLastRoundPoints(Round r, bool lastRound) {
@@ -81,7 +86,6 @@ std::pair<int, int> Game::calculateLastRoundPoints(Round r, bool lastRound) {
         Card playedCard = r.playedCards().at(playerID);
         rawCardPoints += m_rules.getValue(playedCard);
 
-        //TODO fix this for when teams are not yet determined
         //Catch fox
         if (playedCard.value() == CardValue::ASS && playedCard.suit() == Suit::DIAMONDS) {
             if (!teamMembers(playerID, winner))
@@ -148,7 +152,7 @@ std::vector<int> Game::awardGamePoints(std::vector<Round> &rounds) {
             team0winPoints += playerPoints.at(i);
         }
     }
-    //TODO: Adjust with team size != 2
+    //TODO: Adjust with team size != 2 (determine how to do 1 wins vs 3 and how 0.X points are handled)
     if (team0CardPoints > team1CardPoints) {
         team0winPoints += 2;
         if (team1CardPoints < 90) ++team0winPoints;
@@ -188,6 +192,7 @@ Round Game::playRound(size_t startingPlayer) {
         size_t playerID = (player + startingPlayer) % NUMPLAYERS;
         Player *p = &m_players.at(playerID);
         auto currentPlayerCards = &m_playerCards.at(playerID);
+
         Card playedCard = p->nextRound();
 
         if (player == 0)
@@ -198,13 +203,20 @@ Round Game::playRound(size_t startingPlayer) {
             auto validCards = getValidCards(playerID, winningCard);
             auto idx = size_t(randomInt(0, validCards.size() - 1));
             playedCard = validCards.at(idx);
-
             if (player == 0)
                 winningCard = playedCard;
         }
+
+        //actually play the card
         currentPlayerCards->erase(std::find(currentPlayerCards->begin(), currentPlayerCards->end(), playedCard));
         playedCards.at(playerID) = playedCard; //use "at" to preserve player <-> card identity
 
+        //Notify all players that a card was played
+        for(Player p : m_players){
+            p.cardPlayed(playerID,playedCard);
+        }
+
+        //check if the card wins
         if (m_rules.isHigher(playedCard, winningCard)) {
             winningCard = playedCard;
             winner = playerID;
@@ -212,6 +224,9 @@ Round Game::playRound(size_t startingPlayer) {
         std::cout << *p << " played: <" << playedCard << "> ";
     }
     std::cout << "winner: " << m_players.at(winner) << std::endl;
+    for(Player p : m_players){
+        p.playerWonCards(winner);
+    }
 
     return Round(playedCards, winner, startingPlayer);
 }

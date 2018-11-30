@@ -26,7 +26,7 @@ private:
 
     void setRegularTeams();
 
-    size_t getTeamMember(size_t playerID);
+    std::vector<size_t> getTeamMember(size_t playerID);
 
     bool teamMembers(size_t player1, size_t player2);
 

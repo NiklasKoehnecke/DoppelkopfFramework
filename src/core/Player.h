@@ -14,6 +14,9 @@ public:
 
     virtual Card nextRound();
 
+    virtual void cardPlayed(size_t playerID,Card card);
+    virtual void playerWonCards(size_t playerID);
+
     friend std::ostream &operator<<(std::ostream &os, const Player &player);
 
 protected:
