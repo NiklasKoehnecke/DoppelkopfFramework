@@ -13,4 +13,4 @@ The source already includes an ExampleBot, giving you an example of how to code 
  ```    
  map.insert(std::make_pair("BotName", &createInstance<BotClass>));
 ```
- - The "BotName" has to be added in the player.csv together with a int in the line below 
+ - The "BotName" has to be added in the player.csv together with a int in the same lane and an adjustment of the first number
