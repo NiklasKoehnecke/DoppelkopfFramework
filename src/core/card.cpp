@@ -31,7 +31,7 @@ std::string valueName(CardValue v) {
 }
 
 std::ostream &operator<<(std::ostream &os, const Card &card) {
-    os << suitName(card.m_suit) << valueName(card.m_value);
+    os << suitName(card.m_suit).c_str() << valueName(card.m_value).c_str();
     return os;
 }
 
