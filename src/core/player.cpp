@@ -1,4 +1,4 @@
-#include "Player.h"
+#include "player.h"
 
 std::ostream &operator<<(std::ostream &os, const Player &player) {
     os << player.m_name;

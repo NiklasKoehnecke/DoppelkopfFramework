@@ -1,7 +1,6 @@
 #ifndef DOPPELKOPF_RULESET_H
 #define DOPPELKOPF_RULESET_H
 
-
 #include <vector>
 #include "card.h"
 

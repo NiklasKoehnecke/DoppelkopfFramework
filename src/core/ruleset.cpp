@@ -1,4 +1,4 @@
-#include "Ruleset.h"
+#include "ruleset.h"
 #include <algorithm>
 #include "helper.h"
 

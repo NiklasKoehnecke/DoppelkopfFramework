@@ -4,9 +4,10 @@
 #include <map>
 #include <algorithm>
 #include <chrono>
+#include <random>
 
-#include "core/Game.h"
-#include "exampleBot/ExampleBot.h"
+#include "core/game.h"
+#include "exampleBot/exampleBot.h"
 
 template<typename T>
 Player *createInstance() { return new T; }

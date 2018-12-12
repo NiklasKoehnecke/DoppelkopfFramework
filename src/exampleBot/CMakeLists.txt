@@ -1,6 +1,6 @@
 set(SOURCE
         ${SOURCE}
-        ${CMAKE_CURRENT_SOURCE_DIR}/ExampleBot.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/ExampleBot.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/exampleBot.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/exampleBot.h
         PARENT_SCOPE
         )

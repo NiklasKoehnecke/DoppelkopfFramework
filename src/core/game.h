@@ -1,10 +1,9 @@
 #ifndef DOPPELKOPF_GAME_H
 #define DOPPELKOPF_GAME_H
 
-#include <random>
-#include "Player.h"
-#include "Ruleset.h"
-#include "Round.h"
+#include "player.h"
+#include "ruleset.h"
+#include "round.h"
 
 class Game {
 public:

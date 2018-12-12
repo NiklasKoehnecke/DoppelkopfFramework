@@ -1,7 +1,7 @@
 #ifndef DOPPELKOPF_EXAMPLEBOT_H
 #define DOPPELKOPF_EXAMPLEBOT_H
 
-#include "../core/Player.h"
+#include "../core/player.h"
 
 class ExampleBot: public Player {
 public:

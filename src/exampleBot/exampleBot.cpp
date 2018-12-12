@@ -1,4 +1,4 @@
-#include "ExampleBot.h"
+#include "exampleBot.h"
 
 Card ExampleBot::nextRound() {
     Card c = m_cards.back();

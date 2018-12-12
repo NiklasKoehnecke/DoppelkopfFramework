@@ -1,9 +1,8 @@
 #include <iostream>
-#include <algorithm>
 #include <random>
 #include <chrono>
 
-#include "Game.h"
+#include "game.h"
 #include "helper.h"
 
 const int NUMTURNS = 12;

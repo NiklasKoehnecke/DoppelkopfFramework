@@ -1,3 +1,4 @@
+cmake_policy(SET CMP0048 NEW)
 project(doppelkopf)
 cmake_minimum_required(VERSION 3.8)
 set(CMAKE_CXX_STANDARD 11)
@@ -16,6 +17,8 @@ IF(ADD_TESTS)
     add_subdirectory(libs/googletest)
     enable_testing()
     include_directories(${gtest_SOURCE_DIR}/include ${COMMON_INCLUDES})
+    include_directories(src)
+
 
     add_subdirectory(tests)
 if(COVERAGE)
