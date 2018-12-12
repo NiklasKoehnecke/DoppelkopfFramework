@@ -2,7 +2,6 @@ project(doppelkopf)
 cmake_minimum_required(VERSION 3.8)
 set(CMAKE_CXX_STANDARD 11)
 
-set(gtest_force_shared_crt ON)
 set(COVERAGE OFF CACHE BOOL "Coverage")
 
 add_subdirectory(src)
@@ -13,7 +12,7 @@ option(ADD_TESTS "Set to ON to build with tests." OFF)
 
 IF(ADD_TESTS)
 
-
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     add_subdirectory(libs/googletest)
     enable_testing()
     include_directories(${gtest_SOURCE_DIR}/include ${COMMON_INCLUDES})
