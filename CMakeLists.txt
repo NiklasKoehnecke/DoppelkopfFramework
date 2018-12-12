@@ -1,7 +1,9 @@
 project(doppelkopf)
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.8)
+set(CMAKE_CXX_STANDARD 11)
 
 set(gtest_force_shared_crt ON)
+set(COVERAGE OFF CACHE BOOL "Coverage")
 
 add_subdirectory(src)
 add_executable(doppelkopf ${SOURCE} ${CORE})
@@ -11,13 +13,17 @@ option(ADD_TESTS "Set to ON to build with tests." OFF)
 
 IF(ADD_TESTS)
 
+
     add_subdirectory(libs/googletest)
     enable_testing()
     include_directories(${gtest_SOURCE_DIR}/include ${COMMON_INCLUDES})
 
     add_subdirectory(tests)
+if(COVERAGE)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
+endif(COVERAGE)
     add_executable(tests_executable ${test_sources})
     target_link_libraries(tests_executable gtest_main)
 
-    add_test(NAME TestAll COMMAND tests_executable)
+    add_test(tests tests_executable)
 ENDIF(ADD_TESTS)

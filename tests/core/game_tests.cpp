@@ -1,9 +1,8 @@
 #include <gtest/gtest.h>
+#include "../../src/core/card.cpp"
 
-TEST(game_test, test_true) {
-    ASSERT_EQ(1, 1);
+TEST(card_test, test_true){
+	Card card(Suit::DIAMONDS, CardValue::NINE);
+	ASSERT_EQ(card.value(), CardValue::NINE);
 }
 
-TEST(game_test, test_false) {
-    ASSERT_EQ(1, 2);
-}

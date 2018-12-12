@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/NiklasKoehnecke/DoppelkopfFramework.svg?branch=master)](https://travis-ci.com/NiklasKoehnecke/DoppelkopfFramework)
+[![Coverage Status](https://coveralls.io/repos/github/NiklasKoehnecke/DoppelkopfFramework/badge.svg?branch=master)](https://coveralls.io/github/NiklasKoehnecke/DoppelkopfFramework?branch=master)
 ### Doppelkopf
 The game expects to be run from a subdirectory (for ex. `/bin/doppelkopf.exe`). In order to achieve this either: 
  - run cmake out of source (See [this](https://stackoverflow.com/questions/11143062/getting-cmake-to-build-out-of-source-without-wrapping-scripts))

@@ -1,0 +1,25 @@
+dist: xenial
+sudo: false
+
+language:
+  - cpp
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+
+before_install:
+  - pip install --user cpp-coveralls
+
+script:
+  - cmake -H. -Bbuild -DADD_TESTS=ON -DCOVERAGE=1
+  - cd build
+  - cmake --build .
+  - ctest --verbose
+
+after_success:
+  - coveralls --root ..  --exclude libs -E ".*gtest.*" -E ".*CMakeFiles.*" --exclude tests
+
+notifications:
+email: falsej
