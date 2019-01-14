@@ -108,10 +108,15 @@ std::pair<int, int> Game::calculateLastRoundPoints(Round r, bool lastRound) {
 
 }
 
+bool Game::hasCard(size_t playerID, Card card){
+   auto playerHand = m_playerCards.at(playerID);
+   return contains(playerHand, card);
+}
+
 bool Game::checkValidCard(size_t playerID, Card firstCard, Card newCard) {
     auto cards = m_playerCards.at(playerID);
     //Card available?
-    if (!contains(cards, newCard)) return false;
+    if (!hasCard(playerID, newCard)) return false;
     //served ?
     if (m_rules.isSameType(firstCard, newCard)) return true;
         //no need to serve?
@@ -183,9 +188,7 @@ std::vector<int> Game::awardGamePoints(std::vector<Round> &rounds) {
 }
 
 Round Game::playRound(size_t startingPlayer) {
-    size_t winner = startingPlayer;
-    Card winningCard(Suit::DIAMONDS, CardValue::NINE); //dummy card
-    std::vector<Card> playedCards{winningCard, winningCard, winningCard, winningCard}; //this will be overridden
+    std::vector<Card> playedCards; //this will be overridden
 
     for (size_t player = 0; player < NUMPLAYERS; player++) {
         size_t playerID = (player + startingPlayer) % NUMPLAYERS;
@@ -194,40 +197,35 @@ Round Game::playRound(size_t startingPlayer) {
 
         Card playedCard = p->nextRound();
 
-        if (player == 0)
-            winningCard = playedCard;
-
-        //if an invalid card was played, choose a random card to play
-        if (!checkValidCard(playerID, winningCard, playedCard)) {
-            auto validCards = getValidCards(playerID, winningCard);
+        // TODO: We might want some kind of error message if bots fail to make fine moves
+        if(player == 0 && !hasCard(playerID, playedCard)) {
+            // If he is the first one to move, and he doesn't chooses a card he has, play his first card
+            playedCard = m_playerCards[playerID][0];
+        }
+        if(player != 0 && !checkValidCard(playerID, playedCards[0], playedCard)){
+            //if an invalid card was played, choose a random card to play
+            auto validCards = getValidCards(playerID, playedCards[0]);
             auto idx = size_t(randomInt(0, validCards.size() - 1));
             playedCard = validCards.at(idx);
-            if (player == 0)
-                winningCard = playedCard;
         }
 
         //actually play the card
         currentPlayerCards->erase(std::find(currentPlayerCards->begin(), currentPlayerCards->end(), playedCard));
-        playedCards.at(playerID) = playedCard; //use "at" to preserve player <-> card identity
+        playedCards.push_back(playedCard);
 
         //Notify all players that a card was played
         for(Player p : m_players){
             p.cardPlayed(playerID,playedCard);
         }
-
-        //check if the card wins
-        if (m_rules.isHigher(playedCard, winningCard)) {
-            winningCard = playedCard;
-            winner = playerID;
-        }
         std::cout << *p << " played: <" << playedCard << "> ";
     }
-    std::cout << "winner: " << m_players.at(winner) << std::endl;
+    int winningCardPosition = m_rules.getHighestCardID(playedCards);
+    int winningCardPlayerID = (winningCardPosition + startingPlayer) % NUMPLAYERS;
+    std::cout << "winner: " << m_players.at(winningCardPlayerID) << std::endl;
     for(Player p : m_players){
-        p.playerWonCards(winner);
+        p.playerWonCards(winningCardPlayerID);
     }
-
-    return Round(playedCards, winner, startingPlayer);
+    return Round(playedCards, winningCardPlayerID, startingPlayer);
 }
 
 std::vector<std::vector<Card>> Game::createPlayerCards(std::vector<Card> cards) {

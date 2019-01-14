@@ -13,6 +13,7 @@ public:
     }
 
     bool checkValidCard(size_t PlayerID, Card firstCard, Card newCard);
+    bool hasCard(size_t PlayerID, Card card);
 
     std::vector<Card> getValidCards(size_t playerID, Card &c);
 
