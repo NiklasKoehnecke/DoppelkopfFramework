@@ -1,12 +1,10 @@
 #include "pythonBot.h"
-#include <Python.h>
+//#include <Python.h>
 
 PythonBot::PythonBot() {
-    Py_Initialize();
 }
 
 PythonBot::~PythonBot() {
-    Py_Finalize();
 }
 
 Card PythonBot::nextRound() {
