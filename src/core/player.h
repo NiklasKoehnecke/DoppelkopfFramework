@@ -1,3 +1,5 @@
+#include <utility>
+
 #ifndef DOPPELKOPF_PLAYER_H
 #define DOPPELKOPF_PLAYER_H
 
@@ -8,9 +10,9 @@
 
 class Player {
 public:
-    Player(std::string name = "noName") : m_name(name) {}
+    Player(std::string name = "noName") : m_name(std::move(name)) {}
 
-    void setCards(std::vector<Card> cards) { m_cards = std::move(cards); };
+    virtual void setCards(std::vector<Card> cards){ m_cards = std::move(cards); };
 
     virtual Card nextRound();
 

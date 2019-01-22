@@ -6,7 +6,14 @@ set(CMAKE_CXX_STANDARD 11)
 set(COVERAGE OFF CACHE BOOL "Coverage")
 
 add_subdirectory(src)
+
+
+
 add_executable(doppelkopf ${SOURCE} ${CORE})
+
+find_package(PythonLibs REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
+target_link_libraries(doppelkopf ${PYTHON_LIBRARIES})
 
 #tests are off by default, pass -DADD_TESTS=ON in to cmake to activate tests (and reset cache)
 option(ADD_TESTS "Set to ON to build with tests." OFF)
