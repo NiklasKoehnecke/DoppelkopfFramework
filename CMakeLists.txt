@@ -11,17 +11,18 @@ set(EXE_NAME doppelkopf)
 
 add_executable(${EXE_NAME} ${SOURCE} ${CORE})
 
-#find_package(PythonLibs REQUIRED)
-#target_include_directories(${EXE_NAME} PUBLIC ${PYTHON_INCLUDE_DIRS})
-#target_link_libraries(${EXE_NAME} PUBLIC ${PYTHON_LIBRARIES})
+find_package(PythonLibs REQUIRED)
+target_include_directories(${EXE_NAME} PUBLIC ${PYTHON_INCLUDE_DIRS})
+target_link_libraries(${EXE_NAME} PUBLIC ${PYTHON_LIBRARIES})
 
 message("PYTHONLIBS")
 message("   PYTHON_INCLUDE_DIRS ${PYTHON_INCLUDE_DIRS}")
 message("   PYTHON_LIBRARIES ${PYTHON_LIBRARIES}")
 
+
 #tests are off by default, pass -DADD_TESTS=ON in to cmake to activate tests (and reset cache)
 option(ADD_TESTS "Set to ON to build with tests." OFF)
-
+target_include_directories(${EXE_NAME} PUBLIC src)
 
 IF(ADD_TESTS)
 
