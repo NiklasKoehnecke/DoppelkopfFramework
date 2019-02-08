@@ -11,9 +11,9 @@
 #include "pythonBot/pythonBot.h"
 
 template<typename T>
-Player *createInstance() { return new T; }
+Player *createInstance(std::string name) { return new T{name}; }
 
-typedef std::map<std::string, Player *(*)()> map_type;
+typedef std::map<std::string, Player *(*)(std::string)> map_type;
 
 map_type map;
 
@@ -57,6 +57,7 @@ void runGame() {
         std::cout << "failed to open " << filename << '\n';
     } else {
         createPlayerMapping();
+        ExampleBot{"test"};
 
         std::vector<std::pair<std::string, int>> botStats = readStats(file);
         auto s1 = static_cast<long unsigned int>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
@@ -67,7 +68,7 @@ void runGame() {
         std::vector<Player> players;
         for (int i = 0; i < 4; i++) {
             std::cout << botStats.at(i).first;
-            players.push_back(*(map.at(botStats.at(i).first)()));
+            players.push_back(*(map.at(botStats.at(i).first)(botStats.at(i).first)));
         }
 
         Game g = Game(players);

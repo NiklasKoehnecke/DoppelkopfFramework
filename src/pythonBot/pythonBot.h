@@ -5,7 +5,9 @@
 
 class PythonBot: public Player {
 public:
-    PythonBot();
+    void initialize();
+
+    PythonBot(std::string name = "noName"): Player(name) { initialize();}
 
     Card nextRound() override;
 

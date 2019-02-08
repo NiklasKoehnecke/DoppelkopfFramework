@@ -1,13 +1,11 @@
 #include "pythonBot.h"
 #include <Python.h>
 
-PythonBot::PythonBot() {
+void PythonBot::initialize() {
     Py_Initialize();
 
     PyObject *pModule, *pFunc;
-    PyObject *pArgs, *pValue;
-    int i;
-
+    PyObject *pValue;
 
     std::string functionName = "main";
     std::string programName = "pythonBot";
@@ -69,7 +67,6 @@ PythonBot::PythonBot() {
     }
 }
 
-
 PythonBot::~PythonBot() {
     Py_Finalize();
 }
@@ -91,4 +88,6 @@ void PythonBot::cardPlayed(size_t playerID, Card card) {
 void PythonBot::playerWonCards(size_t playerID) {
     Player::playerWonCards(playerID);
 }
+
+
 

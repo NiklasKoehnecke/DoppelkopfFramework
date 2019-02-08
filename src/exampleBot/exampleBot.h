@@ -5,7 +5,8 @@
 
 class ExampleBot: public Player {
 public:
-    ExampleBot(): Player("ExampleBot"){};
+    ExampleBot(std::string name = "noName"): Player(name) {}
+
 
     Card nextRound() override;
 };
