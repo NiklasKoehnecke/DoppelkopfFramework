@@ -11,7 +11,9 @@ const int NUMPLAYERS = 4;
 
 
 std::vector<int> Game::start() {
+    //enable standart rules
     m_rules = Ruleset();
+    m_rules.setEnabled("WithDiamondsAsTrump");
 
     //TODO initialize rules
 
