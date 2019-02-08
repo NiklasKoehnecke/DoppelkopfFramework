@@ -10,14 +10,18 @@
 #include "exampleBot/exampleBot.h"
 
 template<typename T>
-Player *createInstance() { return new T; }
+Player *createInstance(std::string name) { return new T{name}; }
 
-typedef std::map<std::string, Player *(*)()> map_type;
+typedef std::map<std::string, Player *(*)(std::string)> map_type;
 
 map_type map;
 
 void createPlayerMapping() {
-    map.insert(std::make_pair("ExampleBot", &createInstance<ExampleBot>));
+    map.insert(std::make_pair("Patrick", &createInstance<ExampleBot>));
+    map.insert(std::make_pair("Felix", &createInstance<ExampleBot>));
+    map.insert(std::make_pair("Christoph", &createInstance<ExampleBot>));
+    map.insert(std::make_pair("Juergen", &createInstance<ExampleBot>));
+    map.insert(std::make_pair("Mathias", &createInstance<ExampleBot>));
 }
 
 std::vector<std::pair<std::string, int>> readStats(std::fstream &file) {
@@ -67,7 +71,9 @@ int main() {
         //draw players to play and start game
         std::vector<Player> players;
         for (int i = 0; i < 4; i++) {
-            players.push_back(*(map.at(botStats.at(i).first)()));
+            auto playerName = botStats.at(i).first;
+            players.push_back(*(map.at(playerName)(playerName)));
+
         }
 
         Game g = Game(players);
