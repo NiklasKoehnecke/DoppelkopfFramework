@@ -14,6 +14,8 @@ std::vector<int> Game::start() {
     //enable standart rules
     m_rules = Ruleset();
     m_rules.setEnabled("WithDiamondsAsTrump");
+    m_rules.setEnabled("SecondH10BeatsFirstH10");
+
 
     //TODO initialize rules
 
