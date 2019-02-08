@@ -10,6 +10,8 @@ std::string suitName(Suit s) {
             return "S";
         case CLUBS:
             return "C";
+        default:
+            return "NO LABEL";
     }
 }
 
@@ -27,6 +29,8 @@ std::string valueName(CardValue v) {
             return "1";
         case ASS:
             return "A";
+        default:
+            return "NO LABEL";
     }
 }
 

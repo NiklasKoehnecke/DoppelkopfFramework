@@ -209,7 +209,7 @@ Round Game::playRound(size_t startingPlayer) {
         if(player != 0 && !checkValidCard(playerID, playedCards[0], playedCard)){
             //if an invalid card was played, choose a random card to play
             auto validCards = getValidCards(playerID, playedCards[0]);
-            auto idx = size_t(randomInt(0, validCards.size() - 1));
+            auto idx = size_t(randomInt(0, int(validCards.size() - 1)));
             playedCard = validCards.at(idx);
         }
 
