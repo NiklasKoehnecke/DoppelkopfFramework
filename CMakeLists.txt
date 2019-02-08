@@ -15,17 +15,22 @@ IF(ADD_TESTS)
 
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     add_subdirectory(libs/googletest)
+    set(TEST_TARGET tests_executable)
+
     enable_testing()
-    include_directories(${gtest_SOURCE_DIR}/include ${COMMON_INCLUDES})
-    include_directories(src)
-
-
     add_subdirectory(tests)
+
+    add_executable(${TEST_TARGET} ${test_sources})
+
+    target_include_directories(${TEST_TARGET} PUBLIC ${gtest_SOURCE_DIR}/include ${COMMON_INCLUDES})
+    target_include_directories(${TEST_TARGET} PUBLIC src)
+
+
 if(COVERAGE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
 endif(COVERAGE)
-    add_executable(tests_executable ${test_sources})
-    target_link_libraries(tests_executable gtest_main)
 
-    add_test(tests tests_executable)
+    target_link_libraries(${TEST_TARGET} gtest_main)
+
+    add_test(tests ${TEST_TARGET})
 ENDIF(ADD_TESTS)

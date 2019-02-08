@@ -1,4 +1,3 @@
-#include <core/helper.h>
 #include "DifferentTrumpRule.h"
 
 #ifndef DOPPELKOPF_WITHJACKSASTRUMP_H

@@ -7,8 +7,8 @@
 // and will be handled in ruleset.
 
 #include <vector>
-#include "core/card.h"
-#include "core/helper.h"
+#include "../card.h"
+#include "../helper.h"
 
 
 class Rule{
