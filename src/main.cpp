@@ -56,7 +56,13 @@ void writeStats(std::fstream &file, std::vector<std::pair<std::string, int>> &st
 int main() {
     std::string filename = "../player.csv";
     std::fstream file("../player.csv");
-
+    for( int ii=0; ii<10; ++ii ){
+        int input;
+        std::cin >> input;
+        std::cout << input*2 << std::endl;
+        std::cout.flush();
+    }
+    /*
     if (!file.is_open()) {
         std::cout << "failed to open " << filename << '\n';
     } else {
@@ -84,6 +90,6 @@ int main() {
         writeStats(file, botStats);
     }
 
-
+    */
     return 0;
 }
